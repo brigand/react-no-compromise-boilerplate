@@ -1,27 +1,31 @@
+import yargs from 'yargs';
+const {argv} = yargs
+  .help('h').alias('h', 'help')
+  .describe('asset-url', 'where assets are to be served from')
+  .describe('main-url', 'the main web server root')
+  .boolean('prod').describe('prod', 'do a production build')
+  .boolean('dev').describe('prod', 'do a development build (default)')
+  .boolean('only-dev-server').describe('only-dev-server', 'only serve assets')
+  .boolean('only-main-server').describe('only-main-server', 'don\'t run dev-server')
+  .boolean('dev-pages').describe('dev-pages', 'instead of running the main app, run the individual component pages');
+
+
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
-import yargs from 'yargs';
 import express from 'express';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import getConfig from './getConfig';
 import makeWebpackConfig from './makeWebpackConfig';
 
-const {argv} = yargs
-  .help('h').alias('h', 'help')
-  .describe('asset-url', 'where assets are to be served from')
-  .describe('main-url', 'the main web server root')
-  .boolean('prod')
-  .boolean('dev')
-  .boolean('only-dev-server')
-  .boolean('only-main-server');
 
 var appConfig = getConfig({
   hot: true,
   assetUrl: argv.assetUrl,
   mainUrl: argv.mainUrl,
   production: !argv.dev && argv.prod,
+  entry: argv.devPages ? ['./dev/dev-pages/index'] : undefined,
 });
 
 var config = makeWebpackConfig(appConfig);

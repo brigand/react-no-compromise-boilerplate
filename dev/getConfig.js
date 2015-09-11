@@ -6,6 +6,9 @@ export default function getConfig(opts){
     assetsUrl: 'http://localhost:8081/public',
     mainUrl: 'http://localhost:8080',
     hot: false,
+    entry: [
+      './src/client',
+    ],
   });
 
   return config;

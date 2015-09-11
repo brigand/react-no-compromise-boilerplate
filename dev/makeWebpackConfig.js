@@ -26,12 +26,24 @@ export default function makeWebpackConfig(opts){
   const baseAssetUrl = url.format(Object.assign(url.parse(opts.assetsUrl), {pathname: ''}));
   config.entry.push('webpack-dev-server/client?' + baseAssetUrl);
   config.entry.push('webpack/hot/only-dev-server');
-  config.entry.push('./src/client');
+  config.entry.push(...opts.entry);
 
+  const dirs = {
+    src: [
+      path.join(__dirname, '..', 'src'),
+      path.join(__dirname, '..', 'dev', 'dev-pages'),
+    ],
+  };
   config.module.loaders.push({
     test: /\.js$/,
     loaders: ['react-hot', 'babel'],
-    include: path.join(__dirname, '..', 'src'),
+    include: dirs.src,
+  });
+
+  config.module.loaders.push({
+    test: /\.less$/,
+    loaders: ['style-loader', 'css-loader', 'less-loader'],
+    include: dirs.src,
   });
 
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
