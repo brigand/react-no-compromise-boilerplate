@@ -36,7 +36,7 @@
     "css-loader": "^0.18.0",
     "defaults": "^1.0.2",
     "express": "^4.13.3",
-    "jsx-equals": "^0.2.1",
+    "jsx-equals": "^0.3.3",
     "less": "^2.5.1",
     "less-loader": "^2.2.0",
     "mocha": "^2.3.2",

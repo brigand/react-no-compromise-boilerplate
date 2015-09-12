@@ -40,7 +40,7 @@ async function setupWebpack(){
       });
     }
     process(structure);
-    console.log('Running these tests: ', paths);
+    console.log('Running these tests: \n', paths);
     testConfig.entry = paths;
   }
 

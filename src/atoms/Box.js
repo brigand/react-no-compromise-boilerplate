@@ -107,12 +107,11 @@ class Box extends React.Component {
   directionalToString(x, prefix){
     if (!x) return null;
     if (typeof x === 'string') return {[prefix]: x};
-    var styles = {
-      [`${prefix}Top`]: x.top,
-      [`${prefix}Right`]: x.right,
-      [`${prefix}Bottom`]: x.bottom,
-      [`${prefix}Left`]: x.left,
-    };
+    var styles = {};
+    if ('top' in x) styles[`${prefix}Top`] = x.top;
+    if ('right' in x) styles[`${prefix}Right`] = x.right;
+    if ('bottom' in x) styles[`${prefix}Bottom`] = x.bottom;
+    if ('left' in x) styles[`${prefix}Left`] = x.left;
     return styles;
   }
 }
