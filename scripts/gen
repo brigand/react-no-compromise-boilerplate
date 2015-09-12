@@ -30,6 +30,7 @@ const getModuleName = (filePath) => {
 const filePath = argv._[0];
 const moduleName = getModuleName(filePath);
 
+/** File pattern matching **/
 if (false) {}
 else if (/src\/atoms\/.*__test__/.test(filePath)) generateAtomTest();
 else if (/src\/atoms\//.test(filePath)) generateAtom();
@@ -46,6 +47,8 @@ function end(content){
     console.error(err);
   });
 }
+
+/** Generators **/
 
 async function generateAtom(){
   let content = '';
