@@ -9,6 +9,10 @@ export default function getConfig(opts){
     entry: [
       './src/client',
     ],
+
+    test: false,
+    devServer: true,
+    node: false,
   });
 
   return config;

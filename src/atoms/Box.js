@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import classnames from 'classnames';
+import shallowCompareWithChildrenId from '../utils/shallowCompareWithChildrenId';
 import './Box.less';
 
 /**
@@ -35,6 +36,13 @@ class Box extends React.Component {
     shrink: numberOrStringPropType,
     inline: PropTypes.bool,
     size: numberOrStringPropType,
+
+    /**
+     This is used to allow a fast shouldComponentUpdate for when children
+     infrequently update. Passing the same childrenId on the second render
+     considers children to be equal.
+     **/
+    childrenId: PropTypes.any,
   };
 
   static defaultProps = {
@@ -46,6 +54,10 @@ class Box extends React.Component {
     shrink: null,
     inline: false,
   };
+
+  shouldComponentUpdate(nextProps){
+    return shallowCompareWithChildrenId(this.props, nextProps);
+  }
 
   render(){
     const {

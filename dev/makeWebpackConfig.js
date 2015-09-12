@@ -17,15 +17,27 @@ export default function makeWebpackConfig(opts){
       publicPath: opts.assetsUrl,
       filename: 'bundle.js',
     },
+    externals: [],
     module: {
       loaders: []
     },
     plugins: [],
   };
 
+  if (opts.node) {
+    config.target = 'node';
+    const node_modules = require('fs').readdirSync('node_modules').filter((x) => x !== '.bin');
+    config.externals.push(...node_modules);
+    config.output.libraryTarget = 'commonjs2';
+    config.devtool = 'source-map';
+  }
+
   const baseAssetUrl = url.format(Object.assign(url.parse(opts.assetsUrl), {pathname: ''}));
   config.entry.push('webpack-dev-server/client?' + baseAssetUrl);
-  config.entry.push('webpack/hot/only-dev-server');
+  if (opts.hot) {
+    config.entry.push('webpack/hot/only-dev-server');
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  }
   config.entry.push(...opts.entry);
 
   const dirs = {
@@ -34,19 +46,25 @@ export default function makeWebpackConfig(opts){
       path.join(__dirname, '..', 'dev', 'dev-pages'),
     ],
   };
-  config.module.loaders.push({
+  const jsLoaderConfig = {
     test: /\.js$/,
-    loaders: ['react-hot', 'babel'],
+    loaders: ['babel'],
     include: dirs.src,
-  });
+  };
+
+  if (opts.hot) {
+    jsLoaderConfig.loaders.unshift('react-hot');
+  }
+
+  config.module.loaders.push(jsLoaderConfig);
 
   config.module.loaders.push({
     test: /\.less$/,
-    loaders: ['style-loader', 'css-loader', 'less-loader'],
+    loaders: opts.test
+      ? ['null-loader']
+      : ['style-loader', 'css-loader', 'less-loader'],
     include: dirs.src,
   });
-
-  config.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   return config;
 }
