@@ -1,0 +1,134 @@
+#!/usr/bin/env babel-node
+
+import yargs from 'yargs';
+import Promise, {promisifyAll} from 'bluebird';
+import fs from 'fs';
+import inquirer from 'inquirer';
+import path from 'path';
+promisifyAll(fs);
+global.Promise = Promise;
+
+// inquirer is simplified with promises
+const prompt = (question) => new Promise((resolve) => inquirer.prompt([
+  Object.assign(
+    {type: 'input', name: 'x'},
+    typeof question === "string" ? {message: question} : question
+  )
+], resolve)).then(({x}) => x);
+const fileExists = (file) => new Promise((resolve) => fs.exists(file, resolve));
+
+const {argv} = yargs
+  .usage('gen src/path/to/File.js')
+  .demand(1);
+
+const getModuleName = (filePath) => {
+  let name = filePath.split('/').pop().split('.').shift()
+  // npm-package-name to npmPackageName
+  name = name.split('-').map((x, i) => i === 0 ? x : x[0].toUpperCase() + x.slice(1)).join('');
+  return name;
+};
+const filePath = argv._[0];
+const moduleName = getModuleName(filePath);
+
+if (false) {}
+else if (/src\/atoms\/.*__test__/.test(filePath)) generateAtomTest();
+else if (/src\/atoms\//.test(filePath)) generateAtom();
+
+function end(content){
+  console.error(`Writing to ${filePath}`);
+  console.error(content.split('\n').map((x) => `    ${x}`).join('\n'));
+
+  fs.writeFileAsync(filePath, content, 'utf8')
+  .then(() => {
+    console.error(`Written to ${filePath}`);
+  }, (err) => {
+    console.error(`Failed to write ${filePath}`);
+    console.error(err);
+  });
+}
+
+async function generateAtom(){
+  let content = '';
+  content += `import React, {PropTypes} from 'react';\n`;
+  content += await _getModules(filePath);
+  content += `
+/**
+  ${moduleName}
+ **/
+export default
+class ${moduleName} extends React.Component {
+  static propTypes = {
+
+  };
+
+  static defaultProps = {};
+
+  render(){
+    return (
+
+    );
+  }
+}
+
+`;
+  end(content);
+}
+
+async function generateAtomTest(){
+  let content;
+  content += `
+import React from 'react';
+import {createRenderer} from 'react-addons-test-utils';
+import jsxEquals from 'jsx-equals';
+import ${moduleName} from '../${moduleName}';
+
+describe('atoms/${moduleName}', () => {
+  let test;
+  beforeEach(() => {
+    var renderer = createRenderer();
+    test = (a, b) => {
+      renderer.render(a);
+      jsxEquals(renderer.getRenderOutput(), b);
+    }
+  });
+
+  it('<${moduleName} />', () => {
+    test(
+      <${moduleName} />,
+      <span />
+    );
+  });
+});
+
+`
+  end(content);
+}
+
+async function _getModules(relativeTo){
+  let answer
+  var absoluteSource = path.resolve(process.cwd(), relativeTo);
+
+  var results = [];
+  while (answer = await prompt('Name of module to include (e.g. "atoms/Box.js")')) {
+    let name = getModuleName(answer);
+    let location;
+    if (answer.indexOf('/') !== -1) {
+      var absoluteModule = path.resolve(process.cwd(), path.join('src', answer));
+      location = path.relative(absoluteSource, absoluteModule);
+
+      // why do I need to do this?
+      if (location[1] === '.') {
+        location = location.slice(1);
+      }
+
+      if (!await fileExists(absoluteModule) && !await fileExists(absoluteModule + '.js')) {
+        console.warn(`WARN: Path "${location}" from "${absoluteSource}" does not exist.`);
+      }
+    }
+    else {
+      location = name;
+    }
+    results.push(`import ${name} from '${location}';`);
+  }
+  return results.join('\n');
+}
