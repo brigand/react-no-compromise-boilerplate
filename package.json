@@ -26,7 +26,7 @@
     "react": "^0.14.0-rc1",
     "react-addons-update": "^0.14.0-rc1",
     "react-dom": "^0.14.0-rc1",
-    "react-router": "file:react-router-1.0.0-beta4.tgz"
+    "react-router": "^1.0.0-rc1"
   },
   "devDependencies": {
     "babel": "^5.8.23",
