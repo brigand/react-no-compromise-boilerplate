@@ -1,3 +1,6 @@
+// import main component for side effects (css)
+import '../../src/App';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Link} from 'react-router';
@@ -5,7 +8,6 @@ import util from 'util';
 import Box from '../../src/atoms/Box';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import demos from './demos';
-window.r = Router;
 
 // modified by makeRouteForComponent
 var links = [];
@@ -28,10 +30,10 @@ class DemoPage extends React.Component {
     return (
       <Box>
         <Box>
-          <Box flex="1">
+          <Box flex="1" direction="row">
             {links.map((link) => (
               <Box padding="0.5em" key={link.path}>
-                <Link to={link.path}>{link.text}</Link>
+                <a href={link.path}>{link.text}</a>
               </Box>
             ))}
           </Box>

@@ -1,4 +1,6 @@
 import React from 'react';
+import './utils/css-reset.less';
+import './App.less';
 
 export default
 class App extends React.Component {

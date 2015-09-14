@@ -26,6 +26,7 @@ var appConfig = getConfig({
   mainUrl: argv.mainUrl,
   production: !argv.dev && argv.prod,
   entry: argv.devPages ? ['./dev/dev-pages/index'] : undefined,
+  devPages: argv.devPages,
 });
 
 var config = makeWebpackConfig(appConfig);
