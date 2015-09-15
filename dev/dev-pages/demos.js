@@ -31,4 +31,9 @@ export default {
     {children: 'Subtitle', level: 'subtitle'},
     {children: 'Content', level: 'content'},
   ],
+  Link: [
+    require('../../src/atoms/Link'),
+    {children: 'Simple Link', to: '/'},
+    {children: 'Simple Link', to: '/', unstyled: true},
+  ],
 };
