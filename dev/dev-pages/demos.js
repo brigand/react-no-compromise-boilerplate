@@ -26,4 +26,10 @@ export default {
     {children: 'Secondary', which: 'secondary'},
   ],
 
+  Heading: [
+    require('../../src/atoms/Heading'),
+    {children: 'Title', level: 'title'},
+    {children: 'Subtitle', level: 'subtitle'},
+    {children: 'Content', level: 'content'},
+  ],
 };
