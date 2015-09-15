@@ -1,3 +1,7 @@
+/**
+  For use in shouldComponentUpdate. Allows avoiding the equality check on children
+  which in many cases will never ===.
+ **/
 export default function shallowCompareWithChildrenId(props, nextProps, state, nextState){
   var hasChildrenId = props.childrenId != null && nextProps.childrenId != null;
   var childrenKeyEqual = hasChildrenId && props.childrenId === nextProps.childrenId;
