@@ -9,6 +9,7 @@ export default function makeWebpackConfig(opts){
     __PROD__: !!opts.production,
   };
 
+  // rough config
   var config = {
     devtool: 'eval',
     entry: [],
@@ -24,6 +25,7 @@ export default function makeWebpackConfig(opts){
     plugins: [],
   };
 
+  // mostly used for tests
   if (opts.node) {
     config.target = 'node';
     const node_modules = require('fs').readdirSync('node_modules').filter((x) => x !== '.bin');
@@ -33,6 +35,8 @@ export default function makeWebpackConfig(opts){
   }
 
   const baseAssetUrl = url.format(Object.assign(url.parse(opts.assetsUrl), {pathname: ''}));
+
+  // if it's not a single build, we're using webpack-dev-server
   if (opts.watch) {
     config.entry.push('webpack-dev-server/client?' + baseAssetUrl);
   }
@@ -58,11 +62,13 @@ export default function makeWebpackConfig(opts){
     jsLoaderConfig.loaders.unshift('react-hot');
   }
 
+  // eval devtool is no good in production
+  // also minify the code
   if (opts.production) {
     config.devtool = 'source-map';
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
       compress: {
-        warnings: false
+        warnings: false,
       }
     }));
   }
@@ -71,7 +77,9 @@ export default function makeWebpackConfig(opts){
 
   config.module.loaders.push({
     test: /\.less$/,
-    loaders: opts.test
+
+    // we can't use style-loader in node because there's no dom so it errors
+    loaders: opts.node
       ? ['null-loader']
       : ['style-loader', 'css-loader', 'less-loader'],
     include: dirs.src,
