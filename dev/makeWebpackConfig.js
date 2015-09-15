@@ -33,7 +33,9 @@ export default function makeWebpackConfig(opts){
   }
 
   const baseAssetUrl = url.format(Object.assign(url.parse(opts.assetsUrl), {pathname: ''}));
-  config.entry.push('webpack-dev-server/client?' + baseAssetUrl);
+  if (opts.watch) {
+    config.entry.push('webpack-dev-server/client?' + baseAssetUrl);
+  }
   if (opts.hot) {
     config.entry.push('webpack/hot/only-dev-server');
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
@@ -54,6 +56,15 @@ export default function makeWebpackConfig(opts){
 
   if (opts.hot) {
     jsLoaderConfig.loaders.unshift('react-hot');
+  }
+
+  if (opts.production) {
+    config.devtool = 'source-map';
+    config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    }));
   }
 
   config.module.loaders.push(jsLoaderConfig);

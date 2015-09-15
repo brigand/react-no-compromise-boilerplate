@@ -4,7 +4,7 @@ const {argv} = yargs
   .describe('asset-url', 'where assets are to be served from')
   .describe('main-url', 'the main web server root')
   .boolean('prod').describe('prod', 'do a production build')
-  .boolean('dev').describe('prod', 'do a development build (default)')
+  .boolean('dev').describe('dev', 'do a development build (default)')
   .boolean('only-dev-server').describe('only-dev-server', 'only serve assets')
   .boolean('only-main-server').describe('only-main-server', 'don\'t run dev-server')
   .boolean('dev-pages').describe('dev-pages', 'instead of running the main app, run the individual component pages');
@@ -27,6 +27,7 @@ var appConfig = getConfig({
   production: !argv.dev && argv.prod,
   entry: argv.devPages ? ['./dev/dev-pages/index'] : undefined,
   devPages: argv.devPages,
+  watch: true,
 });
 
 var config = makeWebpackConfig(appConfig);
